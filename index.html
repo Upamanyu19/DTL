@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedWaste Connect | Biomedical Waste Aggregator</title>
+    <style>
+        :root {
+            --primary: #005f73;
+            --secondary: #0a9396;
+            --accent: #e9d8a6;
+            --bg: #f8f9fa;
+            --text: #2b2d42;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+        }
+
+        /* Navigation */
+        nav {
+            background-color: white;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .nav-buttons button {
+            padding: 0.5rem 1.2rem;
+            margin-left: 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .login-btn {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary) !important;
+        }
+
+        .signup-btn {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            text-align: center;
+            padding: 4rem 5%;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .search-container {
+            margin-top: 2rem;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .search-container input {
+            padding: 1rem;
+            width: 50%;
+            max-width: 400px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .search-container button {
+            padding: 1rem 2rem;
+            background-color: var(--accent);
+            color: var(--text);
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Vendor Dashboard */
+        .dashboard {
+            padding: 3rem 5%;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .vendor-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        /* Vendor Cards */
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: transform 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 1rem;
+        }
+
+        .vendor-name {
+            font-size: 1.2rem;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .rating {
+            background: #ffb703;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .card-details p {
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .bins {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .bin-badge {
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-weight: bold;
+            border: 1px solid #ccc;
+        }
+
+        .bin-red { background: #e63946; color: white; }
+        .bin-yellow { background: #ffd166; color: #333; }
+        .bin-blue { background: #457b9d; color: white; }
+        .bin-white { background: #f8f9fa; color: #333; }
+
+        .book-btn {
+            width: 100%;
+            padding: 0.8rem;
+            margin-top: 1.5rem;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        .book-btn:hover {
+            background-color: var(--secondary);
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">⚕️ MedWaste Connect</div>
+        <div class="nav-buttons">
+            <button class="login-btn">Hospital Login</button>
+            <button class="signup-btn">Register Vendor</button>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <h1>Compliant Waste Disposal, Simplified.</h1>
+        <p>Find, compare, and schedule authorized biomedical waste collectors near your facility.</p>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Enter PIN Code or Area (e.g., 560001)">
+            <button onclick="filterVendors()">Find Vendors</button>
+        </div>
+    </header>
+
+    <main class="dashboard">
+        <div class="dashboard-header">
+            <h2>Available Vendors Near You</h2>
+            <select id="sortOptions" style="padding: 0.5rem;" onchange="sortVendors()">
+                <option value="rating">Sort by: Top Rated</option>
+                <option value="priceLow">Sort by: Price (Low to High)</option>
+            </select>
+        </div>
+
+        <div class="vendor-grid" id="vendorGrid">
+            </div>
+    </main>
+
+    <script>
+        // Dummy data representing the vendors in your system
+        const vendors = [
+            {
+                id: 1,
+                name: "EcoSafe Bio Disposals",
+                rating: "4.8 ★",
+                numericRating: 4.8,
+                distance: "2.4 km",
+                price: "₹45/kg",
+                numericPrice: 45,
+                time: "Morning (06:00 - 09:00)",
+                bins: ["Red", "Yellow", "Blue", "White"]
+            },
+            {
+                id: 2,
+                name: "GreenCross Logistics",
+                rating: "4.5 ★",
+                numericRating: 4.5,
+                distance: "3.1 km",
+                price: "₹38/kg",
+                numericPrice: 38,
+                time: "Afternoon (14:00 - 17:00)",
+                bins: ["Red", "Yellow", "White"]
+            },
+            {
+                id: 3,
+                name: "EnviroMed Solutions",
+                rating: "4.9 ★",
+                numericRating: 4.9,
+                distance: "5.0 km",
+                price: "₹55/kg",
+                numericPrice: 55,
+                time: "Night (22:00 - 01:00)",
+                bins: ["Red", "Yellow", "Blue"]
+            },
+            {
+                id: 4,
+                name: "Apex Clinical Waste",
+                rating: "4.2 ★",
+                numericRating: 4.2,
+                distance: "1.2 km",
+                price: "₹40/kg",
+                numericPrice: 40,
+                time: "Morning (08:00 - 11:00)",
+                bins: ["Yellow", "White"]
+            }
+        ];
+
+        // Function to create bin badges dynamically
+        function getBinBadges(bins) {
+            return bins.map(bin => {
+                const colorClass = `bin-${bin.toLowerCase()}`;
+                return `<span class="bin-badge ${colorClass}">${bin}</span>`;
+            }).join('');
+        }
+
+        // Function to render the vendor cards to the screen
+        function renderVendors(vendorArray) {
+            const grid = document.getElementById('vendorGrid');
+            grid.innerHTML = ''; // Clear current grid
+
+            vendorArray.forEach(vendor => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="card-header">
+                        <span class="vendor-name">${vendor.name}</span>
+                        <span class="rating">${vendor.rating}</span>
+                    </div>
+                    <div class="card-details">
+                        <p><strong>📍 Distance:</strong> ${vendor.distance}</p>
+                        <p><strong>🕒 Timings:</strong> ${vendor.time}</p>
+                        <p><strong>💰 Pricing:</strong> ${vendor.price}</p>
+                        <div class="bins">
+                            ${getBinBadges(vendor.bins)}
+                        </div>
+                    </div>
+                    <button class="book-btn" onclick="bookPickup('${vendor.name}')">Schedule Pickup</button>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Search/Filter function (Simulated)
+        function filterVendors() {
+            const query = document.getElementById('searchInput').value;
+            if(query) {
+                alert(`Simulating search for vendors near: ${query}`);
+            }
+        }
+
+        // Sorting function
+        function sortVendors() {
+            const sortOption = document.getElementById('sortOptions').value;
+            let sortedArray = [...vendors];
+
+            if (sortOption === 'priceLow') {
+                sortedArray.sort((a, b) => a.numericPrice - b.numericPrice);
+            } else if (sortOption === 'rating') {
+                sortedArray.sort((a, b) => b.numericRating - a.numericRating);
+            }
+
+            renderVendors(sortedArray);
+        }
+
+        // Booking action
+        function bookPickup(vendorName) {
+            alert(`Booking initiated for ${vendorName}. The hospital admin will now be redirected to the contract generation page.`);
+        }
+
+        // Initial render on page load
+        window.onload = () => renderVendors(vendors);
+
+    </script>
+</body>
+</html>
