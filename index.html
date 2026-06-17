@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MedWaste Connect | Dynamic Platform</title>
+    <title>MedWaste Connect | Comprehensive Platform</title>
     <style>
         :root {
             --primary: #005f73;
@@ -11,10 +11,11 @@
             --accent: #e9d8a6;
             --bg: #f8f9fa;
             --text: #2b2d42;
+            --error: #e63946;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: var(--bg); color: var(--text); }
+        body { background-color: var(--bg); color: var(--text); line-height: 1.6; }
 
         /* Navigation */
         nav {
@@ -23,31 +24,39 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100;
         }
         .logo { font-size: 1.5rem; font-weight: bold; color: var(--primary); cursor: pointer; }
+        
+        .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+        .nav-link { background: none; border: none; font-size: 1rem; color: var(--text); cursor: pointer; font-weight: 500; transition: color 0.2s; }
+        .nav-link:hover { color: var(--primary); }
+        
         .nav-buttons button { padding: 0.5rem 1.2rem; margin-left: 1rem; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
         .login-btn { background: transparent; color: var(--primary); border: 2px solid var(--primary); }
+        .logout-btn { background: var(--error); color: white; display: none; }
 
         /* View Management */
         .view-section { display: none; animation: fadeIn 0.4s ease-in-out; }
         .view-section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Landing Page */
+        /* Hero / Landing */
         .hero { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; text-align: center; padding: 6rem 5%; }
         .hero h1 { font-size: 3rem; margin-bottom: 1rem; }
         .hero p { font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.9; }
         .cta-btn { padding: 1rem 2rem; background-color: var(--accent); color: var(--text); border: none; border-radius: 5px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: transform 0.2s; }
         .cta-btn:hover { transform: scale(1.05); }
 
-        /* Dashboard */
-        .dashboard { padding: 3rem 5%; }
-        .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+        /* Reusable Containers */
+        .container { padding: 4rem 5%; max-width: 1000px; margin: 0 auto; }
+        .page-title { color: var(--primary); margin-bottom: 1rem; font-size: 2rem; text-align: center; }
+
+        /* Dashboard & Cards */
         .vendor-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem; }
-        
-        /* Cards */
         .card { background: white; border-radius: 10px; padding: 1.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.05); cursor: pointer; transition: all 0.2s ease; border: 1px solid transparent; }
         .card:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.1); border-color: var(--secondary); }
         .vendor-name { font-size: 1.2rem; color: var(--primary); font-weight: bold; }
         .rating { background: #ffb703; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem; font-weight: bold; float: right; }
+        
+        /* Bins & Badges */
         .bins { display: flex; gap: 5px; margin-top: 10px; flex-wrap: wrap; }
         .bin-badge { font-size: 0.75rem; padding: 4px 10px; border-radius: 12px; font-weight: bold; border: 1px solid #ccc; }
         .bin-red { background: #e63946; color: white; }
@@ -55,22 +64,37 @@
         .bin-blue { background: #457b9d; color: white; }
         .bin-white { background: #f8f9fa; color: #333; }
 
-        /* Dynamic Vendor Page */
-        .vendor-profile { padding: 3rem 5%; max-width: 800px; margin: 0 auto; }
-        .back-btn { background: none; border: none; color: var(--primary); font-weight: bold; cursor: pointer; margin-bottom: 2rem; font-size: 1rem; }
-        .profile-header { background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 2rem; }
-        .profile-header h1 { color: var(--primary); margin-bottom: 0.5rem; }
-        .booking-form { background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        .booking-form input, .booking-form select { width: 100%; padding: 0.8rem; margin: 0.5rem 0 1.5rem; border: 1px solid #ccc; border-radius: 5px; }
-        .submit-btn { width: 100%; padding: 1rem; background-color: var(--primary); color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 1.1rem; }
+        /* Login Form */
+        .auth-container { max-width: 400px; background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin: 4rem auto; }
+        .auth-container input { width: 100%; padding: 0.8rem; margin: 0.8rem 0; border: 1px solid #ccc; border-radius: 5px; }
+        .auth-container button { width: 100%; padding: 1rem; background-color: var(--primary); color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; margin-top: 1rem; }
+        .error-msg { color: var(--error); font-size: 0.9rem; display: none; margin-top: 0.5rem; }
+
+        /* Information Hub Layout */
+        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+        .info-card { background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 5px solid #ccc; }
+        .info-card.yellow-bin { border-left-color: #ffd166; }
+        .info-card.red-bin { border-left-color: #e63946; }
+        .info-card.white-bin { border-left-color: #f8f9fa; border: 1px solid #eee; border-left: 5px solid #ccc; }
+        .info-card.blue-bin { border-left-color: #457b9d; }
+        
+        /* Typography specifics */
+        h3 { margin-bottom: 0.5rem; color: var(--text); }
+        .text-center { text-align: center; }
+        
     </style>
 </head>
 <body>
 
     <nav>
         <div class="logo" onclick="navigateTo('landing-view')">⚕️ MedWaste Connect</div>
-        <div class="nav-buttons">
-            <button class="login-btn">Hospital Login</button>
+        <div class="nav-links">
+            <button class="nav-link" onclick="navigateTo('about-view')">About</button>
+            <button class="nav-link" onclick="navigateTo('info-view')">Segregation Info</button>
+            <div class="nav-buttons">
+                <button id="loginBtn" class="login-btn" onclick="navigateTo('login-view')">Hospital Login</button>
+                <button id="logoutBtn" class="logout-btn" onclick="handleLogout()">Logout</button>
+            </div>
         </div>
     </nav>
 
@@ -82,38 +106,57 @@
         </header>
     </div>
 
-    <div id="dashboard-view" class="view-section">
-        <main class="dashboard">
-            <div class="dashboard-header">
-                <h2>Verified Collectors in Your Sector</h2>
-            </div>
-            <div class="vendor-grid" id="vendorGrid">
-                </div>
-        </main>
+    <div id="about-view" class="view-section container">
+        <h2 class="page-title">About MedWaste Connect</h2>
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+            <p style="margin-bottom: 1rem; font-size: 1.1rem;">The rapid expansion of clinical facilities requires an equally robust framework for biomedical waste management. MedWaste Connect bridges the gap between healthcare providers and authorized disposal vendors.</p>
+            <p style="margin-bottom: 1rem; font-size: 1.1rem;">Our platform acts as a secure aggregator, ensuring that hazardous materials—from pharmacological waste to sharps—are tracked, managed, and disposed of according to strict CPCB guidelines. By digitizing vendor discovery and contracting, we allow clinicians to focus on patient care while maintaining total environmental compliance.</p>
+        </div>
     </div>
 
-    <div id="vendor-profile-view" class="view-section">
-        <div class="vendor-profile">
-            <button class="back-btn" onclick="navigateTo('dashboard-view')">← Back to Network</button>
-            
-            <div class="profile-header" id="dynamicProfileHeader">
-                </div>
-
-            <div class="booking-form">
-                <h3>Schedule a Pickup</h3>
-                <label>Select Waste Categories Required:</label>
-                <div id="dynamicBinSelect" class="bins" style="margin-bottom: 1.5rem;">
-                    </div>
-
-                <label>Estimated Weight (kg)</label>
-                <input type="number" placeholder="e.g., 50">
-
-                <label>Preferred Date</label>
-                <input type="date">
-
-                <button class="submit-btn" onclick="confirmBooking()">Initiate Contract Request</button>
+    <div id="info-view" class="view-section container">
+        <h2 class="page-title">Biomedical Waste Segregation Guidelines</h2>
+        <p class="text-center">Strict adherence to molecular and toxicological safety standards begins at the source. Understand the categories below.</p>
+        
+        <div class="info-grid">
+            <div class="info-card yellow-bin">
+                <h3>Yellow Category</h3>
+                <p><strong>Contents:</strong> Human anatomical waste, animal waste, soiled waste, expired/discarded medicines, chemical waste, and clinical microbiology waste.</p>
+                <p><strong>Disposal:</strong> Incineration or deep burial.</p>
+            </div>
+            <div class="info-card red-bin">
+                <h3>Red Category</h3>
+                <p><strong>Contents:</strong> Contaminated waste (recyclable) such as tubing, bottles, intravenous tubes and sets, catheters, urine bags, syringes (without needles).</p>
+                <p><strong>Disposal:</strong> Autoclaving, micro-waving, followed by shredding.</p>
+            </div>
+            <div class="info-card white-bin">
+                <h3>White Category (Sharps)</h3>
+                <p><strong>Contents:</strong> Needles, syringes with fixed needles, scalpels, blades, or any other contaminated sharp object that may cause puncture and cuts.</p>
+                <p><strong>Disposal:</strong> Dry heat sterilization followed by shredding/mutilation or encapsulation.</p>
+            </div>
+            <div class="info-card blue-bin">
+                <h3>Blue Category</h3>
+                <p><strong>Contents:</strong> Broken or discarded glass, vials, and ampoules (except those containing cytotoxic wastes).</p>
+                <p><strong>Disposal:</strong> Disinfection (by soaking in sodium hypochlorite) or autoclaving, followed by recycling.</p>
             </div>
         </div>
+    </div>
+
+    <div id="login-view" class="view-section">
+        <div class="auth-container">
+            <h2 style="color: var(--primary); text-align: center; margin-bottom: 1rem;">Hospital Portal Portal</h2>
+            <p style="text-align: center; font-size: 0.9rem; color: #666; margin-bottom: 1rem;">Use password <strong>admin123</strong> to simulate login.</p>
+            <input type="text" id="username" placeholder="Facility ID or Email">
+            <input type="password" id="password" placeholder="Password">
+            <button onclick="handleLogin()">Authenticate</button>
+            <p id="errorMsg" class="error-msg">Invalid credentials. Please try again.</p>
+        </div>
+    </div>
+
+    <div id="dashboard-view" class="view-section container" style="padding-top: 2rem;">
+        <h2 style="margin-bottom: 2rem; color: var(--primary);">Verified Collectors in Your Sector</h2>
+        <div class="vendor-grid" id="vendorGrid">
+            </div>
     </div>
 
     <script>
@@ -125,20 +168,12 @@
         ];
 
         // Core Navigation Router
-        function navigateTo(viewId, dataId = null) {
-            // Hide all views
+        function navigateTo(viewId) {
             document.querySelectorAll('.view-section').forEach(view => {
                 view.classList.remove('active');
             });
-            
-            // Show target view
             document.getElementById(viewId).classList.add('active');
             window.scrollTo(0, 0);
-
-            // If navigating to a specific profile, load that dynamic data
-            if (viewId === 'vendor-profile-view' && dataId !== null) {
-                loadProfile(dataId);
-            }
         }
 
         // Helper: Generate Bin HTML
@@ -150,7 +185,7 @@
         function renderDashboard() {
             const grid = document.getElementById('vendorGrid');
             grid.innerHTML = vendors.map(v => `
-                <div class="card" onclick="navigateTo('vendor-profile-view', ${v.id})">
+                <div class="card" onclick="alert('In the full version, this opens the booking interface for ${v.name}')">
                     <span class="rating">${v.rating}</span>
                     <h3 class="vendor-name">${v.name}</h3>
                     <p style="margin: 10px 0; font-size: 0.9rem; color: #666;">${v.cert}</p>
@@ -160,25 +195,36 @@
             `).join('');
         }
 
-        // Render Dynamic Profile Page
-        function loadProfile(vendorId) {
-            const vendor = vendors.find(v => v.id === vendorId);
-            
-            document.getElementById('dynamicProfileHeader').innerHTML = `
-                <h1>${vendor.name} <span class="rating" style="float:none; font-size:1rem;">${vendor.rating}</span></h1>
-                <p style="color: var(--secondary); font-weight: bold; margin-bottom: 1rem;">${vendor.cert}</p>
-                <hr style="border: 0.5px solid #eee; margin: 1rem 0;">
-                <p><strong>Operating Hours:</strong> ${vendor.time}</p>
-                <p><strong>Standard Rate:</strong> ${vendor.price}</p>
-                <p><strong>Facility Distance:</strong> ${vendor.distance}</p>
-            `;
+        // Authentication Logic
+        let isLoggedIn = false;
 
-            document.getElementById('dynamicBinSelect').innerHTML = getBinBadges(vendor.bins);
+        function handleLogin() {
+            const pass = document.getElementById('password').value;
+            const errorElement = document.getElementById('errorMsg');
+            
+            // Simulated validation
+            if (pass === 'admin123') {
+                isLoggedIn = true;
+                errorElement.style.display = 'none';
+                document.getElementById('loginBtn').style.display = 'none';
+                document.getElementById('logoutBtn').style.display = 'inline-block';
+                
+                // Clear fields
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+                
+                // Redirect to dashboard
+                navigateTo('dashboard-view');
+            } else {
+                errorElement.style.display = 'block';
+            }
         }
 
-        function confirmBooking() {
-            alert("Success! Request routed to vendor. Awaiting digital contract signature.");
-            navigateTo('dashboard-view');
+        function handleLogout() {
+            isLoggedIn = false;
+            document.getElementById('loginBtn').style.display = 'inline-block';
+            document.getElementById('logoutBtn').style.display = 'none';
+            navigateTo('landing-view');
         }
 
         // Initialize App
