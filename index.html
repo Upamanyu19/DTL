@@ -78,16 +78,9 @@
         
         /* Best Option Highlight */
         .best-badge {
-            background: var(--success);
-            color: white;
-            font-size: 0.75rem;
-            font-weight: bold;
-            padding: 3px 10px;
-            border-radius: 4px;
-            display: inline-block;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            background: var(--success); color: white; font-size: 0.75rem; font-weight: bold;
+            padding: 3px 10px; border-radius: 4px; display: inline-block; margin-bottom: 10px;
+            text-transform: uppercase; letter-spacing: 0.5px;
         }
         .best-card { border: 2px solid var(--success) !important; }
 
@@ -113,6 +106,13 @@
         .checkbox-group { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 5px; margin-bottom: 15px; }
         .checkbox-group label { background: #eee; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.9rem; }
         
+        /* Checkout Layout */
+        .checkout-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+        @media (max-width: 768px) { .checkout-grid { grid-template-columns: 1fr; } }
+        .order-summary { background: #fafafa; padding: 2rem; border-radius: 8px; border: 1px solid #eee; }
+        .payment-form { padding: 1rem; }
+        .total-display { font-size: 2rem; color: var(--primary); font-weight: bold; margin: 1rem 0; border-top: 2px solid #ddd; padding-top: 1rem; }
+        
         /* Information Hub Layout */
         .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
         .info-card { background: #fafafa; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); border-left: 6px solid #ccc; transition: transform 0.2s; }
@@ -121,9 +121,6 @@
         .info-card.red-bin { border-left-color: #e63946; }
         .info-card.white-bin { border-left-color: #d3d3d3; border: 1px solid #eee; border-left: 6px solid #ccc; }
         .info-card.blue-bin { border-left-color: #457b9d; }
-        
-        h3 { margin-bottom: 0.5rem; color: var(--text); }
-        .text-center { text-align: center; }
         
     </style>
 </head>
@@ -149,34 +146,49 @@
         </header>
     </div>
 
-    <div id="about-view" class="view-section container">
-        <h2 class="page-title">About MedWaste Connect</h2>
-        <div class="elevated-card">
-            <p style="margin-bottom: 1rem; font-size: 1.1rem;">The rapid expansion of clinical facilities requires an equally robust framework for biomedical waste management. MedWaste Connect bridges the gap between healthcare providers and authorized disposal vendors.</p>
-            <p style="margin-bottom: 1rem; font-size: 1.1rem;">Our platform acts as a secure aggregator, ensuring that hazardous materials—from pharmacological waste to sharps—are tracked, managed, and disposed of according to strict environmental guidelines.</p>
-        </div>
+    <div id="dashboard-view" class="view-section container" style="padding-top: 2rem;">
+        <h2 class="page-title">Verified Collectors in Your Sector</h2>
+        <div class="vendor-grid" id="vendorGrid">
+            </div>
     </div>
 
-    <div id="info-view" class="view-section container">
-        <h2 class="page-title">Biomedical Waste Segregation</h2>
+    <div id="checkout-view" class="view-section container">
+        <button onclick="navigateTo('dashboard-view')" style="background:none; border:none; color:var(--primary); cursor:pointer; font-weight:bold; margin-bottom: 1rem;">← Back to Dashboard</button>
         <div class="elevated-card">
-            <p class="text-center" style="font-size: 1.1rem; margin-bottom: 1rem;">Strict adherence to molecular and toxicological safety standards begins at the source.</p>
-            <div class="info-grid">
-                <div class="info-card yellow-bin">
-                    <h3>Yellow Category</h3>
-                    <p><strong>Contents:</strong> Human anatomical waste, animal waste, soiled waste, expired/discarded medicines, and microbiology waste.</p>
+            <h2 style="color: var(--primary); margin-bottom: 1.5rem;">Secure Contract & Checkout</h2>
+            
+            <div class="checkout-grid">
+                <div class="order-summary">
+                    <h3>Vendor Details</h3>
+                    <p style="font-size: 1.2rem; font-weight: bold; color: var(--text); margin-top: 10px;" id="chk-vendor-name">Vendor Name</p>
+                    <p style="color: #666; margin-bottom: 20px;" id="chk-vendor-cert">Certificate</p>
+                    
+                    <p><strong>Base Rate:</strong> <span id="chk-vendor-price">₹0/kg</span></p>
+                    
+                    <input type="hidden" id="chk-base-rate" value="0">
+                    
+                    <div style="margin-top: 20px;">
+                        <label style="font-weight: bold; display:block; margin-bottom:5px;">Estimated Waste Weight (kg):</label>
+                        <input type="number" id="chk-weight" placeholder="Enter kg..." oninput="calculateTotal()" style="width: 100%; padding: 0.8rem; border: 1px solid #ccc; border-radius: 5px; font-size: 1.1rem;">
+                    </div>
+
+                    <div class="total-display" id="chk-total">₹ 0</div>
                 </div>
-                <div class="info-card red-bin">
-                    <h3>Red Category</h3>
-                    <p><strong>Contents:</strong> Contaminated waste (recyclable) such as tubing, intravenous sets, catheters, syringes (without needles).</p>
-                </div>
-                <div class="info-card white-bin">
-                    <h3>White Category (Sharps)</h3>
-                    <p><strong>Contents:</strong> Needles, scalpels, blades, or any contaminated sharp object causing puncture cuts.</p>
-                </div>
-                <div class="info-card blue-bin">
-                    <h3>Blue Category</h3>
-                    <p><strong>Contents:</strong> Broken or discarded glass, vials, and ampoules.</p>
+
+                <div class="payment-form auth-form">
+                    <h3>Payment Details</h3>
+                    <label style="display:block; margin-top:10px;">Select Pickup Date:</label>
+                    <input type="date" required>
+                    
+                    <label style="display:block; margin-top:10px;">Payment Method:</label>
+                    <select id="payment-method">
+                        <option value="upi">UPI / QR Code</option>
+                        <option value="card">Credit / Debit Card</option>
+                        <option value="netbanking">Net Banking</option>
+                        <option value="invoice">Monthly Invoice (Contract)</option>
+                    </select>
+
+                    <button onclick="processPayment()" style="margin-top: 2rem; background-color: var(--success);">Confirm Booking & Pay</button>
                 </div>
             </div>
         </div>
@@ -204,24 +216,18 @@
                     <option value="hospital">I am a Hospital / Clinic</option>
                     <option value="vendor">I am a Disposal Vendor</option>
                 </select>
-                
                 <input type="text" id="reg-name" placeholder="Organization Name">
                 <input type="email" id="reg-email" placeholder="Official Email Address">
                 
-                <!-- Expanded Vendor Fields -->
                 <div id="vendor-fields" style="display: none;">
                     <hr style="border:0; border-top:1px solid #ddd; margin: 15px 0;">
                     <p style="font-size:0.9rem; font-weight:bold; color:var(--primary); margin-bottom:5px;">Vendor Setup Details</p>
-                    
                     <input type="text" id="reg-cert" placeholder="CPCB / State Board License Number">
                     <input type="text" id="reg-price" placeholder="Collection Rate (e.g., ₹42/kg)">
-                    
                     <p style="font-size:0.85rem; margin-top:10px;">Select Operating Days:</p>
                     <input type="text" id="reg-days" placeholder="e.g., Mon, Wed, Fri">
-                    
                     <p style="font-size:0.85rem; margin-top:10px;">Preferred Collection Timings:</p>
                     <input type="text" id="reg-time" placeholder="e.g., Morning (06:00 - 10:00)">
-
                     <p style="font-size:0.85rem; margin-top:10px;">Waste Categories Handled:</p>
                     <div class="checkbox-group">
                         <label><input type="checkbox" class="reg-bin" value="Red"> Red Bin</label>
@@ -230,22 +236,37 @@
                         <label><input type="checkbox" class="reg-bin" value="White"> White Bin</label>
                     </div>
                 </div>
-                
                 <input type="password" id="reg-password" placeholder="Create Password">
                 <button onclick="handleRegister()">Complete Registration</button>
             </div>
         </div>
     </div>
 
-    <div id="dashboard-view" class="view-section container" style="padding-top: 2rem;">
-        <h2 class="page-title">Verified Collectors in Your Sector</h2>
-        <div class="vendor-grid" id="vendorGrid">
-            <!-- Cards injected dynamically here -->
+    <div id="about-view" class="view-section container">
+        <h2 class="page-title">About MedWaste Connect</h2>
+        <div class="elevated-card">
+            <p style="margin-bottom: 1rem; font-size: 1.1rem;">The rapid expansion of clinical facilities requires an equally robust framework for biomedical waste management. MedWaste Connect bridges the gap between healthcare providers and authorized disposal vendors.</p>
+            <p style="margin-bottom: 1rem; font-size: 1.1rem;">Our platform acts as a secure aggregator, ensuring that hazardous materials—from pharmacological waste to sharps—are tracked, managed, and disposed of according to strict environmental guidelines.</p>
+        </div>
+    </div>
+
+    <div id="info-view" class="view-section container">
+        <h2 class="page-title">Biomedical Waste Segregation</h2>
+        <div class="elevated-card">
+            <p class="text-center" style="font-size: 1.1rem; margin-bottom: 1rem;">Strict adherence to molecular and toxicological safety standards begins at the source.</p>
+            <div class="info-grid">
+                <div class="info-card yellow-bin"><h3>Yellow Category</h3><p><strong>Contents:</strong> Human anatomical waste, animal waste, soiled waste, expired/discarded medicines, and microbiology waste.</p></div>
+                <div class="info-card red-bin"><h3>Red Category</h3><p><strong>Contents:</strong> Contaminated waste (recyclable) such as tubing, intravenous sets, catheters, syringes (without needles).</p></div>
+                <div class="info-card white-bin"><h3>White Category (Sharps)</h3><p><strong>Contents:</strong> Needles, scalpels, blades, or any contaminated sharp object causing puncture cuts.</p></div>
+                <div class="info-card blue-bin"><h3>Blue Category</h3><p><strong>Contents:</strong> Broken or discarded glass, vials, and ampoules.</p></div>
+            </div>
         </div>
     </div>
 
     <script>
-        // Centralized Array storing Vendor Data
+        let isLoggedIn = false;
+        let selectedVendor = null;
+
         let vendors = [
             { id: 1, name: "EcoSafe Bio Disposals", rating: 4.8, distance: "2.4 km", price: "₹45/kg", time: "Morning (06:00 - 09:00)", days: "Mon-Sat", bins: ["Red", "Yellow", "Blue", "White"], cert: "KSPCB Approved" },
             { id: 2, name: "GreenCross Logistics", rating: 4.5, distance: "3.1 km", price: "₹38/kg", time: "Afternoon (14:00 - 17:00)", days: "Mon, Wed, Fri", bins: ["Red", "Yellow", "White"], cert: "ISO 14001" },
@@ -265,8 +286,6 @@
 
         function renderDashboard() {
             const grid = document.getElementById('vendorGrid');
-            
-            // Logic to determine the Best Option (highest rating)
             let bestVendor = vendors.reduce((max, vendor) => vendor.rating > max.rating ? vendor : max, vendors[0]);
 
             grid.innerHTML = vendors.map(v => {
@@ -275,12 +294,12 @@
                 const cardClass = isBest ? 'card best-card' : 'card';
 
                 return `
-                    <div class="${cardClass}" onclick="alert('Initiating booking contract with ${v.name}')">
+                    <div class="${cardClass}" onclick="initiateBooking(${v.id})">
                         ${bestBadge}
                         <span class="rating">${v.rating} ★</span>
                         <h3 class="vendor-name">${v.name}</h3>
                         <p style="margin: 10px 0; font-size: 0.9rem; color: #666;">📝 ${v.cert}</p>
-                        <p><strong>📍 Distance:</strong> ${v.distance} (Simulated)</p>
+                        <p><strong>📍 Distance:</strong> ${v.distance}</p>
                         <p><strong>💰 Pricing:</strong> ${v.price}</p>
                         <p><strong>📅 Days:</strong> ${v.days}</p>
                         <p><strong>⏱️ Timing:</strong> ${v.time}</p>
@@ -290,6 +309,52 @@
             }).join('');
         }
 
+        // --- BOOKING & CHECKOUT LOGIC ---
+        function initiateBooking(vendorId) {
+            if (!isLoggedIn) {
+                alert("🔒 Security Alert: Please log in to your hospital account to confirm payments and secure a contract with vendors.");
+                navigateTo('auth-view');
+                return;
+            }
+
+            selectedVendor = vendors.find(v => v.id === vendorId);
+            
+            // Extract numerical price from string (e.g., "₹45/kg" -> 45)
+            const numericalPrice = parseInt(selectedVendor.price.replace(/[^\d]/g, ''));
+            
+            // Populate Checkout Page
+            document.getElementById('chk-vendor-name').innerText = selectedVendor.name;
+            document.getElementById('chk-vendor-cert').innerText = "Verified: " + selectedVendor.cert;
+            document.getElementById('chk-vendor-price').innerText = selectedVendor.price;
+            document.getElementById('chk-base-rate').value = numericalPrice;
+            
+            // Reset form
+            document.getElementById('chk-weight').value = "";
+            document.getElementById('chk-total').innerText = "₹ 0";
+
+            navigateTo('checkout-view');
+        }
+
+        function calculateTotal() {
+            const weight = document.getElementById('chk-weight').value;
+            const baseRate = document.getElementById('chk-base-rate').value;
+            const total = weight * baseRate;
+            
+            document.getElementById('chk-total').innerText = "₹ " + (total > 0 ? total : 0);
+        }
+
+        function processPayment() {
+            const weight = document.getElementById('chk-weight').value;
+            if(!weight || weight <= 0) {
+                alert("Please enter a valid estimated weight.");
+                return;
+            }
+            
+            alert(`✅ Payment Verified! Contract initiated with ${selectedVendor.name}. A pickup truck will be dispatched on your selected date.`);
+            navigateTo('dashboard-view');
+        }
+
+        // --- AUTHENTICATION LOGIC ---
         function switchAuthTab(tab) {
             document.getElementById('tab-login').classList.remove('active');
             document.getElementById('tab-register').classList.remove('active');
@@ -308,39 +373,34 @@
         function handleLogin() {
             const pass = document.getElementById('login-password').value;
             if (pass === 'admin123') {
+                isLoggedIn = true;
                 document.getElementById('errorMsg').style.display = 'none';
                 document.getElementById('loginBtn').style.display = 'none';
                 document.getElementById('logoutBtn').style.display = 'inline-block';
-                
-                // Redirect Hospital to Dashboard to see Vendors + Best Option
                 navigateTo('dashboard-view');
             } else {
                 document.getElementById('errorMsg').style.display = 'block';
             }
         }
 
-        // Handles Registration, Data Extraction, and Dynamic Updating
         function handleRegister() {
             const role = document.getElementById('reg-role').value;
             const orgName = document.getElementById('reg-name').value || "Newly Registered Partner";
 
             if (role === 'vendor') {
-                // Extracting specific vendor details
                 const newPrice = document.getElementById('reg-price').value || "₹--/kg";
                 const newTime = document.getElementById('reg-time').value || "Standard Hours";
                 const newDays = document.getElementById('reg-days').value || "TBD";
                 const newCert = document.getElementById('reg-cert').value || "Pending Verification";
                 
-                // Extracting checkboxes
                 const checkedBins = Array.from(document.querySelectorAll('.reg-bin:checked')).map(cb => cb.value);
                 const assignedBins = checkedBins.length > 0 ? checkedBins : ["General"];
 
-                // Create new vendor object
                 const newVendor = {
                     id: vendors.length + 1,
                     name: orgName,
-                    rating: 5.0, // Given a 5.0 initial rating for prototype demonstration purposes
-                    distance: "1.5 km", // Simulated baseline
+                    rating: 5.0,
+                    distance: "1.5 km",
                     price: newPrice,
                     time: newTime,
                     days: newDays,
@@ -348,21 +408,19 @@
                     cert: newCert
                 };
 
-                // Push to array and update UI
                 vendors.push(newVendor);
                 renderDashboard();
-                
                 alert(`Vendor Profile Created: ${orgName}. You have been added to the public aggregator dashboard.`);
             } else {
                 alert(`Hospital Profile Created: ${orgName}. You can now login to view and book vendors.`);
             }
 
-            // Clean up and return to login
             document.getElementById('reg-name').value = "";
             switchAuthTab('login');
         }
 
         function handleLogout() {
+            isLoggedIn = false;
             document.getElementById('loginBtn').style.display = 'inline-block';
             document.getElementById('logoutBtn').style.display = 'none';
             document.getElementById('login-password').value = "";
