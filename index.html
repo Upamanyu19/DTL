@@ -9,9 +9,10 @@
             --primary: #005f73;
             --secondary: #0a9396;
             --accent: #e9d8a6;
-            --bg-stable: #f0f4f8; /* Clean, stable clinical light background */
+            --bg-stable: #f0f4f8;
             --text: #2b2d42;
             --error: #e63946;
+            --success: #2a9d8f;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
@@ -70,11 +71,26 @@
 
         /* Dashboard & Cards */
         .vendor-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem; }
-        .card { background: white; border-radius: 10px; padding: 1.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.04); cursor: pointer; transition: all 0.2s ease; border: 1px solid rgba(0,0,0,0.03); }
+        .card { position: relative; background: white; border-radius: 10px; padding: 1.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.04); cursor: pointer; transition: all 0.2s ease; border: 1px solid rgba(0,0,0,0.03); }
         .card:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.08); border-color: var(--secondary); }
         .vendor-name { font-size: 1.2rem; color: var(--primary); font-weight: bold; }
         .rating { background: #ffb703; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem; font-weight: bold; float: right; }
         
+        /* Best Option Highlight */
+        .best-badge {
+            background: var(--success);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: bold;
+            padding: 3px 10px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .best-card { border: 2px solid var(--success) !important; }
+
         /* Bins & Badges */
         .bins { display: flex; gap: 5px; margin-top: 10px; flex-wrap: wrap; }
         .bin-badge { font-size: 0.75rem; padding: 4px 10px; border-radius: 12px; font-weight: bold; border: 1px solid #ccc; }
@@ -84,7 +100,7 @@
         .bin-white { background: #f8f9fa; color: #333; }
 
         /* Authentication Portal */
-        .auth-container { max-width: 450px; background: white; padding: 2.5rem; border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.06); margin: 4rem auto; border: 1px solid rgba(0,0,0,0.03); }
+        .auth-container { max-width: 500px; background: white; padding: 2.5rem; border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.06); margin: 4rem auto; border: 1px solid rgba(0,0,0,0.03); }
         .auth-tabs { display: flex; margin-bottom: 1.5rem; border-bottom: 2px solid #eee; }
         .auth-tab { flex: 1; padding: 1rem; background: none; border: none; font-weight: bold; color: #666; cursor: pointer; font-size: 1.1rem; transition: 0.3s; }
         .auth-tab.active { color: var(--primary); border-bottom: 3px solid var(--primary); }
@@ -94,6 +110,9 @@
         .auth-form button:hover { background-color: var(--secondary); }
         .error-msg { color: var(--error); font-size: 0.9rem; display: none; margin-top: 0.5rem; text-align: center; }
 
+        .checkbox-group { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 5px; margin-bottom: 15px; }
+        .checkbox-group label { background: #eee; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.9rem; }
+        
         /* Information Hub Layout */
         .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
         .info-card { background: #fafafa; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); border-left: 6px solid #ccc; transition: transform 0.2s; }
@@ -134,7 +153,7 @@
         <h2 class="page-title">About MedWaste Connect</h2>
         <div class="elevated-card">
             <p style="margin-bottom: 1rem; font-size: 1.1rem;">The rapid expansion of clinical facilities requires an equally robust framework for biomedical waste management. MedWaste Connect bridges the gap between healthcare providers and authorized disposal vendors.</p>
-            <p style="margin-bottom: 1rem; font-size: 1.1rem;">Our platform acts as a secure aggregator, ensuring that hazardous materials—from pharmacological waste to sharps—are tracked, managed, and disposed of according to strict environmental guidelines. By digitizing vendor discovery and contracting, we allow clinicians to focus on patient care while maintaining total compliance.</p>
+            <p style="margin-bottom: 1rem; font-size: 1.1rem;">Our platform acts as a secure aggregator, ensuring that hazardous materials—from pharmacological waste to sharps—are tracked, managed, and disposed of according to strict environmental guidelines.</p>
         </div>
     </div>
 
@@ -142,27 +161,22 @@
         <h2 class="page-title">Biomedical Waste Segregation</h2>
         <div class="elevated-card">
             <p class="text-center" style="font-size: 1.1rem; margin-bottom: 1rem;">Strict adherence to molecular and toxicological safety standards begins at the source.</p>
-            
             <div class="info-grid">
                 <div class="info-card yellow-bin">
                     <h3>Yellow Category</h3>
                     <p><strong>Contents:</strong> Human anatomical waste, animal waste, soiled waste, expired/discarded medicines, and microbiology waste.</p>
-                    <p><strong>Disposal:</strong> Incineration or deep burial.</p>
                 </div>
                 <div class="info-card red-bin">
                     <h3>Red Category</h3>
                     <p><strong>Contents:</strong> Contaminated waste (recyclable) such as tubing, intravenous sets, catheters, syringes (without needles).</p>
-                    <p><strong>Disposal:</strong> Autoclaving, micro-waving, followed by shredding.</p>
                 </div>
                 <div class="info-card white-bin">
                     <h3>White Category (Sharps)</h3>
                     <p><strong>Contents:</strong> Needles, scalpels, blades, or any contaminated sharp object causing puncture cuts.</p>
-                    <p><strong>Disposal:</strong> Dry heat sterilization followed by shredding/mutilation.</p>
                 </div>
                 <div class="info-card blue-bin">
                     <h3>Blue Category</h3>
                     <p><strong>Contents:</strong> Broken or discarded glass, vials, and ampoules.</p>
-                    <p><strong>Disposal:</strong> Disinfection (sodium hypochlorite) or autoclaving, followed by recycling.</p>
                 </div>
             </div>
         </div>
@@ -176,7 +190,7 @@
             </div>
 
             <div id="form-login" class="auth-form">
-                <h3 style="text-align: center; margin-bottom: 1rem; color: var(--primary);">Welcome Back</h3>
+                <h3 style="text-align: center; margin-bottom: 1rem; color: var(--primary);">Hospital Portal Sign-In</h3>
                 <p style="text-align: center; font-size: 0.85rem; color: #666; margin-bottom: 1rem;">Use password <strong>admin123</strong> to simulate login.</p>
                 <input type="text" id="login-username" placeholder="Email or Facility ID">
                 <input type="password" id="login-password" placeholder="Password">
@@ -190,16 +204,35 @@
                     <option value="hospital">I am a Hospital / Clinic</option>
                     <option value="vendor">I am a Disposal Vendor</option>
                 </select>
-                <input type="text" placeholder="Organization Name">
-                <input type="email" placeholder="Official Email Address">
                 
+                <input type="text" id="reg-name" placeholder="Organization Name">
+                <input type="email" id="reg-email" placeholder="Official Email Address">
+                
+                <!-- Expanded Vendor Fields -->
                 <div id="vendor-fields" style="display: none;">
-                    <input type="text" placeholder="CPCB / State Board License Number">
-                    <input type="text" placeholder="Operating PIN Codes (e.g., 560001, 560002)">
+                    <hr style="border:0; border-top:1px solid #ddd; margin: 15px 0;">
+                    <p style="font-size:0.9rem; font-weight:bold; color:var(--primary); margin-bottom:5px;">Vendor Setup Details</p>
+                    
+                    <input type="text" id="reg-cert" placeholder="CPCB / State Board License Number">
+                    <input type="text" id="reg-price" placeholder="Collection Rate (e.g., ₹42/kg)">
+                    
+                    <p style="font-size:0.85rem; margin-top:10px;">Select Operating Days:</p>
+                    <input type="text" id="reg-days" placeholder="e.g., Mon, Wed, Fri">
+                    
+                    <p style="font-size:0.85rem; margin-top:10px;">Preferred Collection Timings:</p>
+                    <input type="text" id="reg-time" placeholder="e.g., Morning (06:00 - 10:00)">
+
+                    <p style="font-size:0.85rem; margin-top:10px;">Waste Categories Handled:</p>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" class="reg-bin" value="Red"> Red Bin</label>
+                        <label><input type="checkbox" class="reg-bin" value="Yellow"> Yellow Bin</label>
+                        <label><input type="checkbox" class="reg-bin" value="Blue"> Blue Bin</label>
+                        <label><input type="checkbox" class="reg-bin" value="White"> White Bin</label>
+                    </div>
                 </div>
                 
-                <input type="password" placeholder="Create Password">
-                <button onclick="handleRegister()">Submit Registration</button>
+                <input type="password" id="reg-password" placeholder="Create Password">
+                <button onclick="handleRegister()">Complete Registration</button>
             </div>
         </div>
     </div>
@@ -207,15 +240,17 @@
     <div id="dashboard-view" class="view-section container" style="padding-top: 2rem;">
         <h2 class="page-title">Verified Collectors in Your Sector</h2>
         <div class="vendor-grid" id="vendorGrid">
-            </div>
+            <!-- Cards injected dynamically here -->
+        </div>
     </div>
 
     <script>
-        const vendors = [
-            { id: 1, name: "EcoSafe Bio Disposals", rating: "4.8 ★", distance: "2.4 km", price: "₹45/kg", time: "Morning (06:00 - 09:00)", bins: ["Red", "Yellow", "Blue", "White"], cert: "KSPCB Approved" },
-            { id: 2, name: "GreenCross Logistics", rating: "4.5 ★", distance: "3.1 km", price: "₹38/kg", time: "Afternoon (14:00 - 17:00)", bins: ["Red", "Yellow", "White"], cert: "ISO 14001" },
-            { id: 3, name: "EnviroMed Solutions", rating: "4.9 ★", distance: "5.0 km", price: "₹55/kg", time: "Night (22:00 - 01:00)", bins: ["Red", "Yellow", "Blue"], cert: "KSPCB & CPCB Approved" },
-            { id: 4, name: "Apex Clinical Waste", rating: "4.2 ★", distance: "1.2 km", price: "₹40/kg", time: "Morning (08:00 - 11:00)", bins: ["Yellow", "White"], cert: "State Board Approved" }
+        // Centralized Array storing Vendor Data
+        let vendors = [
+            { id: 1, name: "EcoSafe Bio Disposals", rating: 4.8, distance: "2.4 km", price: "₹45/kg", time: "Morning (06:00 - 09:00)", days: "Mon-Sat", bins: ["Red", "Yellow", "Blue", "White"], cert: "KSPCB Approved" },
+            { id: 2, name: "GreenCross Logistics", rating: 4.5, distance: "3.1 km", price: "₹38/kg", time: "Afternoon (14:00 - 17:00)", days: "Mon, Wed, Fri", bins: ["Red", "Yellow", "White"], cert: "ISO 14001" },
+            { id: 3, name: "EnviroMed Solutions", rating: 4.9, distance: "5.0 km", price: "₹55/kg", time: "Night (22:00 - 01:00)", days: "Daily", bins: ["Red", "Yellow", "Blue"], cert: "KSPCB & CPCB Approved" },
+            { id: 4, name: "Apex Clinical Waste", rating: 4.2, distance: "1.2 km", price: "₹40/kg", time: "Morning (08:00 - 11:00)", days: "Tue, Thu, Sat", bins: ["Yellow", "White"], cert: "State Board Approved" }
         ];
 
         function navigateTo(viewId) {
@@ -230,18 +265,31 @@
 
         function renderDashboard() {
             const grid = document.getElementById('vendorGrid');
-            grid.innerHTML = vendors.map(v => `
-                <div class="card" onclick="alert('In the full version, this opens the booking interface for ${v.name}')">
-                    <span class="rating">${v.rating}</span>
-                    <h3 class="vendor-name">${v.name}</h3>
-                    <p style="margin: 10px 0; font-size: 0.9rem; color: #666;">${v.cert}</p>
-                    <p><strong>📍</strong> ${v.distance} | <strong>💰</strong> ${v.price}</p>
-                    <div class="bins">${getBinBadges(v.bins)}</div>
-                </div>
-            `).join('');
+            
+            // Logic to determine the Best Option (highest rating)
+            let bestVendor = vendors.reduce((max, vendor) => vendor.rating > max.rating ? vendor : max, vendors[0]);
+
+            grid.innerHTML = vendors.map(v => {
+                const isBest = v.id === bestVendor.id;
+                const bestBadge = isBest ? `<div class="best-badge">🏆 Best Option Available</div>` : '';
+                const cardClass = isBest ? 'card best-card' : 'card';
+
+                return `
+                    <div class="${cardClass}" onclick="alert('Initiating booking contract with ${v.name}')">
+                        ${bestBadge}
+                        <span class="rating">${v.rating} ★</span>
+                        <h3 class="vendor-name">${v.name}</h3>
+                        <p style="margin: 10px 0; font-size: 0.9rem; color: #666;">📝 ${v.cert}</p>
+                        <p><strong>📍 Distance:</strong> ${v.distance} (Simulated)</p>
+                        <p><strong>💰 Pricing:</strong> ${v.price}</p>
+                        <p><strong>📅 Days:</strong> ${v.days}</p>
+                        <p><strong>⏱️ Timing:</strong> ${v.time}</p>
+                        <div class="bins" style="margin-top:15px;">${getBinBadges(v.bins)}</div>
+                    </div>
+                `;
+            }).join('');
         }
 
-        // Authentication & Tabs Logic
         function switchAuthTab(tab) {
             document.getElementById('tab-login').classList.remove('active');
             document.getElementById('tab-register').classList.remove('active');
@@ -252,36 +300,72 @@
             document.getElementById(`form-${tab}`).style.display = 'block';
         }
 
-        // Handle Vendor Fields Visibility
         function toggleVendorFields() {
             const role = document.getElementById('reg-role').value;
             document.getElementById('vendor-fields').style.display = (role === 'vendor') ? 'block' : 'none';
         }
 
-        // Handle Login Action
         function handleLogin() {
             const pass = document.getElementById('login-password').value;
             if (pass === 'admin123') {
                 document.getElementById('errorMsg').style.display = 'none';
                 document.getElementById('loginBtn').style.display = 'none';
                 document.getElementById('logoutBtn').style.display = 'inline-block';
+                
+                // Redirect Hospital to Dashboard to see Vendors + Best Option
                 navigateTo('dashboard-view');
             } else {
                 document.getElementById('errorMsg').style.display = 'block';
             }
         }
 
-        // Handle Registration Simulation
+        // Handles Registration, Data Extraction, and Dynamic Updating
         function handleRegister() {
             const role = document.getElementById('reg-role').value;
-            alert(`Simulating successful registration for a ${role}. Your profile is now under review by our compliance team.`);
+            const orgName = document.getElementById('reg-name').value || "Newly Registered Partner";
+
+            if (role === 'vendor') {
+                // Extracting specific vendor details
+                const newPrice = document.getElementById('reg-price').value || "₹--/kg";
+                const newTime = document.getElementById('reg-time').value || "Standard Hours";
+                const newDays = document.getElementById('reg-days').value || "TBD";
+                const newCert = document.getElementById('reg-cert').value || "Pending Verification";
+                
+                // Extracting checkboxes
+                const checkedBins = Array.from(document.querySelectorAll('.reg-bin:checked')).map(cb => cb.value);
+                const assignedBins = checkedBins.length > 0 ? checkedBins : ["General"];
+
+                // Create new vendor object
+                const newVendor = {
+                    id: vendors.length + 1,
+                    name: orgName,
+                    rating: 5.0, // Given a 5.0 initial rating for prototype demonstration purposes
+                    distance: "1.5 km", // Simulated baseline
+                    price: newPrice,
+                    time: newTime,
+                    days: newDays,
+                    bins: assignedBins,
+                    cert: newCert
+                };
+
+                // Push to array and update UI
+                vendors.push(newVendor);
+                renderDashboard();
+                
+                alert(`Vendor Profile Created: ${orgName}. You have been added to the public aggregator dashboard.`);
+            } else {
+                alert(`Hospital Profile Created: ${orgName}. You can now login to view and book vendors.`);
+            }
+
+            // Clean up and return to login
+            document.getElementById('reg-name').value = "";
             switchAuthTab('login');
         }
 
-        // Handle Logout Action
         function handleLogout() {
             document.getElementById('loginBtn').style.display = 'inline-block';
             document.getElementById('logoutBtn').style.display = 'none';
+            document.getElementById('login-password').value = "";
             navigateTo('landing-view');
         }
 
