@@ -131,6 +131,7 @@
         <div class="nav-links">
             <button class="nav-link" onclick="navigateTo('about-view')">About</button>
             <button class="nav-link" onclick="navigateTo('info-view')">Segregation Info</button>
+            <button class="nav-link" onclick="resetPrototypeData()" style="font-size: 0.85rem; color: #999;" title="Clears local storage for a fresh demo">Reset Demo</button>
             <div class="nav-buttons">
                 <button id="loginBtn" class="login-btn" onclick="navigateTo('auth-view')">Login / Register</button>
                 <button id="logoutBtn" class="logout-btn" onclick="handleLogout()">Logout</button>
@@ -146,18 +147,22 @@
         </header>
     </div>
 
+    <!-- Dashboard View -->
     <div id="dashboard-view" class="view-section container" style="padding-top: 2rem;">
         <h2 class="page-title">Verified Collectors in Your Sector</h2>
         <div class="vendor-grid" id="vendorGrid">
-            </div>
+            <!-- Cards injected dynamically here -->
+        </div>
     </div>
 
+    <!-- Checkout View -->
     <div id="checkout-view" class="view-section container">
         <button onclick="navigateTo('dashboard-view')" style="background:none; border:none; color:var(--primary); cursor:pointer; font-weight:bold; margin-bottom: 1rem;">← Back to Dashboard</button>
         <div class="elevated-card">
             <h2 style="color: var(--primary); margin-bottom: 1.5rem;">Secure Contract & Checkout</h2>
             
             <div class="checkout-grid">
+                <!-- Left Side: Order Summary -->
                 <div class="order-summary">
                     <h3>Vendor Details</h3>
                     <p style="font-size: 1.2rem; font-weight: bold; color: var(--text); margin-top: 10px;" id="chk-vendor-name">Vendor Name</p>
@@ -175,6 +180,7 @@
                     <div class="total-display" id="chk-total">₹ 0</div>
                 </div>
 
+                <!-- Right Side: Payment Form -->
                 <div class="payment-form auth-form">
                     <h3>Payment Details</h3>
                     <label style="display:block; margin-top:10px;">Select Pickup Date:</label>
@@ -194,6 +200,7 @@
         </div>
     </div>
 
+    <!-- Auth View -->
     <div id="auth-view" class="view-section">
         <div class="auth-container">
             <div class="auth-tabs">
@@ -242,6 +249,7 @@
         </div>
     </div>
 
+    <!-- About View -->
     <div id="about-view" class="view-section container">
         <h2 class="page-title">About MedWaste Connect</h2>
         <div class="elevated-card">
@@ -250,6 +258,7 @@
         </div>
     </div>
 
+    <!-- Info View -->
     <div id="info-view" class="view-section container">
         <h2 class="page-title">Biomedical Waste Segregation</h2>
         <div class="elevated-card">
@@ -267,12 +276,31 @@
         let isLoggedIn = false;
         let selectedVendor = null;
 
-        let vendors = [
+        // Base Data
+        const defaultVendors = [
             { id: 1, name: "EcoSafe Bio Disposals", rating: 4.8, distance: "2.4 km", price: "₹45/kg", time: "Morning (06:00 - 09:00)", days: "Mon-Sat", bins: ["Red", "Yellow", "Blue", "White"], cert: "KSPCB Approved" },
             { id: 2, name: "GreenCross Logistics", rating: 4.5, distance: "3.1 km", price: "₹38/kg", time: "Afternoon (14:00 - 17:00)", days: "Mon, Wed, Fri", bins: ["Red", "Yellow", "White"], cert: "ISO 14001" },
             { id: 3, name: "EnviroMed Solutions", rating: 4.9, distance: "5.0 km", price: "₹55/kg", time: "Night (22:00 - 01:00)", days: "Daily", bins: ["Red", "Yellow", "Blue"], cert: "KSPCB & CPCB Approved" },
             { id: 4, name: "Apex Clinical Waste", rating: 4.2, distance: "1.2 km", price: "₹40/kg", time: "Morning (08:00 - 11:00)", days: "Tue, Thu, Sat", bins: ["Yellow", "White"], cert: "State Board Approved" }
         ];
+
+        // LOAD FROM LOCAL STORAGE OR USE DEFAULTS
+        let vendors = JSON.parse(localStorage.getItem('medWasteVendors'));
+        if (!vendors) {
+            vendors = defaultVendors;
+            localStorage.setItem('medWasteVendors', JSON.stringify(vendors));
+        }
+
+        // RESET PROTOTYPE DATA FUNCTION
+        function resetPrototypeData() {
+            if(confirm("This will delete any new vendors you added and reset the demo to its original state. Continue?")) {
+                localStorage.removeItem('medWasteVendors');
+                vendors = defaultVendors;
+                localStorage.setItem('medWasteVendors', JSON.stringify(vendors));
+                renderDashboard();
+                alert("Demo reset successfully.");
+            }
+        }
 
         function navigateTo(viewId) {
             document.querySelectorAll('.view-section').forEach(view => view.classList.remove('active'));
@@ -286,17 +314,27 @@
 
         function renderDashboard() {
             const grid = document.getElementById('vendorGrid');
-            let bestVendor = vendors.reduce((max, vendor) => vendor.rating > max.rating ? vendor : max, vendors[0]);
+            
+            // Only evaluate established vendors (exclude "New") for the Best Option
+            let establishedVendors = vendors.filter(v => v.rating !== "New");
+            let bestVendor = establishedVendors.length > 0 
+                ? establishedVendors.reduce((max, vendor) => vendor.rating > max.rating ? vendor : max, establishedVendors[0]) 
+                : null;
 
             grid.innerHTML = vendors.map(v => {
-                const isBest = v.id === bestVendor.id;
+                const isBest = bestVendor && v.id === bestVendor.id;
                 const bestBadge = isBest ? `<div class="best-badge">🏆 Best Option Available</div>` : '';
                 const cardClass = isBest ? 'card best-card' : 'card';
+                
+                // Logic to display "NEW" instead of numerical rating
+                const ratingDisplay = v.rating === "New" 
+                    ? `<span class="rating" style="background: var(--primary);">NEW</span>`
+                    : `<span class="rating">${v.rating} ★</span>`;
 
                 return `
                     <div class="${cardClass}" onclick="initiateBooking(${v.id})">
                         ${bestBadge}
-                        <span class="rating">${v.rating} ★</span>
+                        ${ratingDisplay}
                         <h3 class="vendor-name">${v.name}</h3>
                         <p style="margin: 10px 0; font-size: 0.9rem; color: #666;">📝 ${v.cert}</p>
                         <p><strong>📍 Distance:</strong> ${v.distance}</p>
@@ -319,16 +357,13 @@
 
             selectedVendor = vendors.find(v => v.id === vendorId);
             
-            // Extract numerical price from string (e.g., "₹45/kg" -> 45)
-            const numericalPrice = parseInt(selectedVendor.price.replace(/[^\d]/g, ''));
+            const numericalPrice = parseInt(selectedVendor.price.replace(/[^\d]/g, '')) || 0;
             
-            // Populate Checkout Page
             document.getElementById('chk-vendor-name').innerText = selectedVendor.name;
             document.getElementById('chk-vendor-cert').innerText = "Verified: " + selectedVendor.cert;
             document.getElementById('chk-vendor-price').innerText = selectedVendor.price;
             document.getElementById('chk-base-rate').value = numericalPrice;
             
-            // Reset form
             document.getElementById('chk-weight').value = "";
             document.getElementById('chk-total').innerText = "₹ 0";
 
@@ -339,7 +374,6 @@
             const weight = document.getElementById('chk-weight').value;
             const baseRate = document.getElementById('chk-base-rate').value;
             const total = weight * baseRate;
-            
             document.getElementById('chk-total').innerText = "₹ " + (total > 0 ? total : 0);
         }
 
@@ -349,18 +383,16 @@
                 alert("Please enter a valid estimated weight.");
                 return;
             }
-            
             alert(`✅ Payment Verified! Contract initiated with ${selectedVendor.name}. A pickup truck will be dispatched on your selected date.`);
             navigateTo('dashboard-view');
         }
 
-        // --- AUTHENTICATION LOGIC ---
+        // --- AUTHENTICATION & REGISTRATION LOGIC ---
         function switchAuthTab(tab) {
             document.getElementById('tab-login').classList.remove('active');
             document.getElementById('tab-register').classList.remove('active');
             document.getElementById('form-login').style.display = 'none';
             document.getElementById('form-register').style.display = 'none';
-
             document.getElementById(`tab-${tab}`).classList.add('active');
             document.getElementById(`form-${tab}`).style.display = 'block';
         }
@@ -399,7 +431,7 @@
                 const newVendor = {
                     id: vendors.length + 1,
                     name: orgName,
-                    rating: 5.0,
+                    rating: "New", // Set status to New instead of a number
                     distance: "1.5 km",
                     price: newPrice,
                     time: newTime,
@@ -409,6 +441,10 @@
                 };
 
                 vendors.push(newVendor);
+                
+                // SAVE NEW VENDOR TO BROWSER MEMORY
+                localStorage.setItem('medWasteVendors', JSON.stringify(vendors));
+                
                 renderDashboard();
                 alert(`Vendor Profile Created: ${orgName}. You have been added to the public aggregator dashboard.`);
             } else {
